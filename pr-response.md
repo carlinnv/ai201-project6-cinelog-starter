@@ -26,9 +26,9 @@
 **Engagement with reviewer's point:** The reviewer is right to say that many people would want to see films they've added recently. Users might want to see what films they've watched recently, in which case chronological order would be most helpful.  
 
 ## Comment 6 — Rebase
-**What conflicted:**
-**How I resolved it:**
-**How I verified no conflict remains:**
+**What conflicted:** Rebasing onto main pulled in the UUID migration commit. `.gitignore` had a normal textual conflict. More subtly, since my watchlist commits never touch `models.py`, the merge silently kept main's version of that file — which deleted the `WatchlistEntry` model and left my watchlist code assuming integer film IDs against a UUID schema.
+**How I resolved it:** Merged `.gitignore` to keep both versions' entries. Re-added `WatchlistEntry` to `models.py` with `film_id` as `db.String(36)` (UUID) instead of `db.Integer`, and updated the docstrings in `watchlist_service.py`/`watchlist.py` that still described `film_id` as an int.
+**How I verified no conflict remains:** `git log --merges main..feature/watchlist` returns nothing, confirming a clean linear history. Reran the full test suite after the fix — all 5 tests passed.
 
 ## PR Description
 <!-- Written at the end — feature overview, design decisions, manual testing steps -->
